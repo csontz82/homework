@@ -1,0 +1,39 @@
+openapi: "3.0.0"
+info:
+  description: "Homework - Message Lister Microservice OpenApi definitions"
+  version: "1.0.0"
+  title: "Message Lister Microservice"
+  contact:
+    name: "Norbert Nemeth"
+    email: "csontz82@gmail.com"
+  license:
+    name: "Proprietary license"
+servers:
+  - url: http://localhost/messageLister/
+    description: local development server
+paths:
+  /messages:
+    get:
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/Message'
+components:
+  schemas:
+    Message:
+      type: "object"
+      properties:
+        content:
+          description: "The message text"
+          type: "string"
+        timestamp:
+          description: "The timestamp when the message was sent"
+          type: "string"
+          format: "date-time"
+        "longest_palindrome_size":
+          description: "The length of the longest palindrome contained within the value of the content property"

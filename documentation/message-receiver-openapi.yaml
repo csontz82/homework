@@ -1,0 +1,42 @@
+openapi: "3.0.0"
+info:
+  description: "Homework - Message Receiver Microservice OpenApi definitions"
+  version: "1.0.0"
+  title: "Message Receiver Microservice"
+  contact:
+    name: "Norbert Nemeth"
+    email: "csontz82@gmail.com"
+  license:
+    name: "Proprietary license"
+servers:
+  - url: http://localhost/messageReceiver/
+    description: local development server
+paths:
+  /messages:
+    post:
+      requestBody:
+        $ref: '#/components/requestBodies/PostMessageRequest'
+      responses:
+        200:
+          description: Message received successfully
+        400:
+          description: Invalid request
+components:
+  requestBodies:
+    PostMessageRequest:
+      description: "Post a message request"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PostMessageContent'
+  schemas:
+    PostMessageContent:
+      type: "object"
+      properties:
+        content:
+          description: "The message text"
+          type: "string"
+        timestamp:
+          description: "The timestamp when the message was sent"
+          type: "string"
+          format: "date-time"
