@@ -1,0 +1,31 @@
+@startuml
+
+autonumber
+
+Client -> "Message Receiver": "HTTP POST /messages"
+activate "Message Receiver"
+
+activate "Kafka topic"
+activate "Message persistence"
+"Message persistence" -> "Kafka topic" : Subscribe
+
+"Message Receiver" -> "Kafka topic" : Publish
+
+"Message Receiver" -> Client : HTTP 200 OK
+deactivate "Message Receiver"
+
+loop Consuming messages
+
+"Kafka topic" -> "Message persistence" : Read the topic
+deactivate "Kafka topic"
+
+"Message persistence" -> MongoDB : persist
+activate MongoDB
+MongoDB -> "Message persistence" : success
+deactivate MongoDB
+
+end
+
+deactivate "Message persistence"
+
+@enduml
