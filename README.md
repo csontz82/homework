@@ -74,3 +74,21 @@ The tasks in this workflow are:
 * Do max length palindrom calculation
 * Response the message list enriched with the calculated length
 
+## Build and run instructions
+
+### How to build the microservice docker images
+
+```
+gradlew jibDockerBuild
+```
+
+### How to run all the microservices and other software components
+
+```
+docker-compose up
+```
+
+## Further improvement areas
+
+* Generate Rest Controller's code from the OpenApi descriptors
+* Improve error handling in RestControllerAdvices and response with less sensitive information (e.g. class names)

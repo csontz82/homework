@@ -1,1 +1,3 @@
 rootProject.name = 'homework'
+
+include 'message-receiver-ms'

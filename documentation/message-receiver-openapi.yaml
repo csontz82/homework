@@ -28,9 +28,9 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/PostMessageContent'
+            $ref: '#/components/schemas/PostMessageRequest'
   schemas:
-    PostMessageContent:
+    PostMessageRequest:
       type: "object"
       properties:
         content:
