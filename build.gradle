@@ -1,4 +1,8 @@
 subprojects {
+    repositories {
+        mavenCentral()
+    }
+
     task wrapper(type: Wrapper) {
         gradleVersion = '6.2.2'
     }

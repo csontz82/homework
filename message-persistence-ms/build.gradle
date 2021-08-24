@@ -1,0 +1,41 @@
+plugins {
+    id 'java'
+    id("org.springframework.boot") version "2.0.4.RELEASE"
+    id("io.spring.dependency-management") version "1.0.6.RELEASE"
+    id("com.google.cloud.tools.jib") version "2.3.0"
+}
+
+sourceCompatibility = 11
+targetCompatibility = 11
+
+dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.kafka:spring-kafka")
+
+    implementation("com.fasterxml.jackson.core:jackson-databind")
+
+    // Only compile time dependencies
+    compileOnly("org.projectlombok:lombok:1.18.18")
+    annotationProcessor("org.projectlombok:lombok:1.18.18")
+
+    // Dependencies for testing
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.7.0")
+}
+
+jib {
+    from {
+        image = "adoptopenjdk/openjdk11-openj9:alpine-jre"
+    }
+    to {
+        image = "message-persistence-ms"
+    }
+    container {
+        labels = [maintainer: "Norbert Nemeth <csontz82@gmail.com>"]
+        creationTime = "USE_CURRENT_TIMESTAMP"
+        jvmFlags = [
+                "-Djava.net.preferIPv4Stack=true"
+        ]
+        ports = ["8080"]
+    }
+}

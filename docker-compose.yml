@@ -12,51 +12,44 @@ services:
       - 27017:27017
     network_mode: bridge
 
-  message-receiver-ms:
-    image: message-receiver-ms:latest
-    container_name: message-receiver-ms
+  zookeeper:
+    image: ${ZOOKEEPER_IMAGE}
+    container_name: zookeeper
+    hostname: zookeeper
     ports:
-      - 8080:8080
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: "2181"
+      ZOOKEEPER_TICK_TIME: "2000"
+      ZOOKEEPER_SERVERS: "zookeeper:22888:23888"
     network_mode: bridge
 
-#  zookeeper:
-#    image: ${ZOOKEEPER_IMAGE}
-#    container_name: zookeeper
-#    hostname: zookeeper
-#    ports:
-#      - "2181:2181"
-#    environment:
-#      ZOOKEEPER_SERVER_ID: 1
-#      ZOOKEEPER_CLIENT_PORT: "2181"
-#      ZOOKEEPER_TICK_TIME: "2000"
-#      ZOOKEEPER_SERVERS: "zookeeper:22888:23888"
-#    network_mode: bridge
-#
-#  kafka:
-#    image: ${KAFKA_IMAGE}
-#    container_name: kafka
-#    hostname: kafka
-#    ports:
-#      - "9092:9092"
-#      - "29092:29092"
-#    environment:
-#      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
-#      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-#      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-#      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
-#      KAFKA_BROKER_ID: 1
-#      KAFKA_BROKER_RACK: "r1"
-#      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-#      KAFKA_DELETE_TOPIC_ENABLE: "true"
-#      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
-#      KAFKA_SCHEMA_REGISTRY_URL: "schemaregistry:8081"
-#      #KAFKA_LOG4J_ROOT_LOGLEVEL: INFO
-#      KAFKA_JMX_PORT: 9991
-#    depends_on:
-#      - zookeeper
-#    links:
-#      - zookeeper
-#    network_mode: bridge
+  kafka:
+    image: ${KAFKA_IMAGE}
+    container_name: kafka
+    hostname: kafka
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://kafka:29092
+      KAFKA_BROKER_ID: 1
+      KAFKA_BROKER_RACK: "r1"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_DELETE_TOPIC_ENABLE: "true"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+      #KAFKA_SCHEMA_REGISTRY_URL: "schemaregistry:8081"
+      #KAFKA_LOG4J_ROOT_LOGLEVEL: INFO
+      KAFKA_JMX_PORT: 9991
+    depends_on:
+      - zookeeper
+    links:
+      - zookeeper
+    network_mode: bridge
 #
 #  schemaregistry:
 #    image: ${SCHEMA_REGISTRY_IMAGE}
@@ -124,3 +117,36 @@ services:
 #    links:
 #      - kafka-rest-proxy
 #    network_mode: bridge
+
+  message-receiver-ms:
+    image: message-receiver-ms:latest
+    container_name: message-receiver-ms
+    ports:
+      - 8080:8080
+    environment:
+      KAFKA_BOOTSTRAP_ADDRESS: "kafka:29092"
+      KAFKA_TOPIC_NAME: homeworkMessages
+      KAFKA_TOPIC_PARTITIONS: 1
+      KAFKA_TOPIC_REPLICAS: 1
+    depends_on:
+      - kafka
+    links:
+      - kafka
+    network_mode: bridge
+
+  message-persistence-ms:
+    image: message-persistence-ms:latest
+    container_name: message-persistence-ms
+    ports:
+      - 8081:8080
+    environment:
+      KAFKA_BOOTSTRAP_ADDRESS: "kafka:29092"
+      KAFKA_TOPIC_NAME: homeworkMessages
+      KAFKA_TOPIC_PARTITIONS: 1
+      KAFKA_TOPIC_REPLICAS: 1
+      KAFKA_GROUP_ID: persister
+    depends_on:
+      - kafka
+    links:
+      - kafka
+    network_mode: bridge

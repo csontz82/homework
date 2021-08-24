@@ -90,5 +90,24 @@ docker-compose up
 
 ## Further improvement areas
 
+### SDLC
+* The Non-Functional requirements should be clarified with stakeholders
+* Apply peer reviews in the SDLC (maybe pair programming too) to increase the quality, and share the knowledge with other devs
+* Add some static code analysis to the build process
+* Apply more complex branching strategy in case of multiple developers - I just committed everything to the main branch, because I am the only committer and it is just a homework task
+
+### Architecture
+* When choosing the database we should make our choice using the CAP theorem to see which characteristic of DBs are important for us. Now I chose MongoDB, because I know that we want to store JSON documents (REST payload, but it easily translatable to any other structure, e.g. An SQL table with schema) and scalability is important, but in production environment it is a more complex question.
+
+### Implementation
 * Generate Rest Controller's code from the OpenApi descriptors
 * Improve error handling in RestControllerAdvices and response with less sensitive information (e.g. class names)
+* Usage of webflux implementation to build a non-blocking solutions
+
+### Scalability
+* Increase scalability with running these microservices on some containerisation orchestrator, e.g. Kubernetes, and add load balancing with defining k8s services for them, and add Horisontal Pod Autoscaling to scale the nr. of running instances of microservices according to the actual load.
+* Consider scaling of the WebSocket services
+* Consider scaling of the DB? MongoDB as a document NoSQL DB is well scalable, but it would be fine to know if our system is write or read heavy?
+
+### Operations
+* How topic creation should happen? In my solution the Message Receiver microservice creates the topic if it doesn't exist, or we can enable auto topic creation for Kafka, but in a production environment it should happen with administrators, and then these workarounds could be dropped.
